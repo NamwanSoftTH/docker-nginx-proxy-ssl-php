@@ -40,7 +40,7 @@ or
 
 ## Add Site
 
-copy directory <code>site-1</code> in root directory and rename directory to {SITE_DIR_NEW}
+copy directory <code>site-1</code> in root directory and rename directory to <code>{SITE_DIR_NEW}</code>
 
 <code>cd {SITE_DIR_NEW}</code>
 edit Environment variables in <code>.env</code>
