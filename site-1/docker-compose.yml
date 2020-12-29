@@ -1,0 +1,41 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: lemp_${SITE_NO}_nginx
+    restart: unless-stopped
+    volumes:
+      - ${DIR_HTML}/:/var/www/html
+      - ${ROOT_DOCKER_CONF}/nginx/site/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
+      - ${ROOT_DOCKER_CONF}/nginx/site/conf.d:/etc/nginx/conf.d:ro
+      - ${ROOT_DOCKER_CONF}/logs/${DIR_NAME}/nginx:/var/log/nginx
+    environment:
+      TZ: Asia/Bangkok
+      VIRTUAL_HOST: ${SITE_URL}
+      LETSENCRYPT_HOST: ${SITE_URL}
+      LETSENCRYPT_EMAIL: ${SITE_EMAIL}
+    expose:
+      - 80
+    networks:
+      - web_proxy
+      - default
+  php:
+    build: ${ROOT_DOCKER_CONF}/php-fpm/
+    container_name: lemp_${SITE_NO}_php
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Bangkok
+    volumes:
+      - ${DIR_HTML}/:/var/www/html
+      - ${ROOT_DOCKER_CONF}/php-fpm/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      - ${ROOT_DOCKER_CONF}/php-fpm/php.ini:/usr/local/etc/php/php.ini
+      - ${ROOT_DOCKER_CONF}/logs/${DIR_NAME}/php-fpm:/var/log/php-fpm
+    expose:
+      - 9000
+networks:
+  default:
+    external:
+      name: web_network_${SITE_NO}
+  web_proxy:
+    external:
+      name: web_proxy
